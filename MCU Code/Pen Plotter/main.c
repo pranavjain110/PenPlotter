@@ -2,7 +2,7 @@
 #include<math.h>
 #include "initialize.h"
 #define sizeOfBuffer 280
-#define sizeOfBufferMotor 40
+#define sizeOfBufferMotor 10
 
 enum CommandType {StraightLine = 1, ClockWise = 2, AntiClockWise = 3, Rapid = 4};
 enum MachineStatus {Idle = 1, Buzy = 2};
@@ -11,7 +11,7 @@ volatile unsigned char RxByte;
 volatile unsigned int  bufferLength = 0,readIndex = 0, writeIndex = 0,flagByteRx = 0,escByte, discretizeFlag=0,
         stepperState, steps=0, stepsDesired=0, flagACW = 0, flagCW = 1, moveStepperFlag = 0,state = 6,
         buffer[sizeOfBuffer],bufferDC[sizeOfBufferMotor],bufferStepper[sizeOfBufferMotor],machineFlag = Idle, bufferLengthMotor = 0, readIndexMotor=0, writeIndexMotor = 0,
-        discretizedPointX,discretizedPointY;
+        discretizedPointX,discretizedPointY, byteRemovedMotorDC,byteRemovedMotorStepper;
 
 unsigned int i,j,k, command = 0;
 int positionCurrent , posDesiredDC=0  , error = 0, controllerOutput = 0,
@@ -58,11 +58,11 @@ void  motorControlLaw_DC(void)
         }
     }
 
-    MPYS = 2500;
+    MPYS = 4000;
     OP2 = error;
     controllerOutput = RES0;
 
-    if(error>25)
+    if(error>=16)
         TB1CCR2 = 0;
     else
         TB1CCR2 = 0xFFFF - controllerOutput;
@@ -89,8 +89,11 @@ int totalPoints(void)
     else
         diffDataByte2 = prevDataByte2 - dataByte2;
 
-    prevDataByte1 = dataByte1;
-    prevDataByte2 = dataByte2;
+
+    if(diffDataByte1 >100||diffDataByte2>100)
+    {
+        testVar =0;
+    }
 
     if(diffDataByte1>diffDataByte2)
     {
@@ -216,7 +219,6 @@ int main(void)
                         __no_operation();                       // For debug only
                     }
 
-                    machineFlag = Buzy;
 
                     switch(command)
                     {
@@ -252,8 +254,9 @@ int main(void)
 
         }
 
-        if(machineFlag == Buzy && discretizeFlag == 1 && bufferLengthMotor < sizeOfBufferMotor)
+        if(discretizeFlag == 1 && bufferLengthMotor < sizeOfBufferMotor)
         {
+
             k++;
             if(command == StraightLine || command == Rapid)
             {
@@ -275,8 +278,25 @@ int main(void)
                 startPosX = endPosX;
                 startPosY = endPosY;
             }
-
         }
+
+        if(bufferLengthMotor > 0 && machineFlag == Idle && error < 2)
+        {
+            byteRemovedMotorDC = bufferDC[readIndexMotor];
+            byteRemovedMotorStepper = bufferStepper[readIndexMotor];
+
+            readIndexMotor++;
+            bufferLengthMotor--;
+            if(readIndexMotor == sizeOfBufferMotor)
+                readIndexMotor=0;
+
+            posDesiredDC = byteRemovedMotorDC;
+            stepsDesired = byteRemovedMotorStepper ;
+            machineFlag = Buzy;
+            TA0CCTL1 |= CCIE; // TACCR0 interrupt enabled for stepper
+        }
+
+
 
 //        testVar = findAngle(-10,10);
 
@@ -327,6 +347,7 @@ __interrupt void Timer_A0 (void)
         moveStepperFlag = 0;
         flagACW = 0;
         __no_operation();
+        machineFlag = Idle;
         TA0CCTL1 &= ~CCIE; // TBCCR0 interrupt disabled
     }
 
