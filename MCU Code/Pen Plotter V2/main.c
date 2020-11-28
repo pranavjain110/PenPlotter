@@ -3,14 +3,19 @@
 #include "initialize.h"
 #define sizeOfBuffer 280
 
+enum CommandType {StraightLine = 1, ClockWise = 2, AntiClockWise = 3, Rapid = 4};
+enum MachineStatus {Idle = 1, Buzy = 2};
+char byteRemoved[]=" \n\r";
 volatile unsigned char RxByte;
+volatile unsigned int  bufferLength = 0,readIndex = 0, writeIndex = 0,flagByteRx = 0,escByte,
+        stepperState, steps=0, stepsDesired=0, flagACW = 0, flagCW = 1, moveStepperFlag = 0,state = 6,
+        buffer[sizeOfBuffer],machineFlag = Idle;
 
-volatile unsigned int  bufferLength = 0,readIndex = 0, writeIndex = 0,flagByteRx = 0,
-        stepperState, steps=0, stepsDesired=0, flagACW = 0, flagCW = 1, moveStepperFlag = 0,
-        buffer[sizeOfBuffer];
+unsigned int i,j, command = 0;
+int positionCurrent , posDesiredDC=0  , error = 0, controllerOutput = 0,
+        dataByte1, dataByte2, dataByte3, dataByte4, endPosX, endPosY,centerX, centerY,
+        prevDataByte1 = 0, prevDataByte2 = 0 ,diffDataByte1, diffDataByte2, n;
 
-unsigned int i,j;
-int positionCurrent , posDesiredDC=200  , error = 0, controllerOutput = 0;
 
 unsigned const int stepperStateTable[] =  { 1, 0, 0, 0,  //State 1
                                             1, 0, 1, 0,  //State 2
@@ -21,7 +26,10 @@ unsigned const int stepperStateTable[] =  { 1, 0, 0, 0,  //State 1
                                             0, 0, 0, 1,  //State 7
                                             1, 0, 0, 1 }; //State 8
 
-double ans ;
+double ans,thetaStart,thetaEnd;
+
+//variables for debugging and testing code
+double testVar ;
 
 
 void  motorControlLaw_DC(void)
@@ -57,6 +65,40 @@ void  motorControlLaw_DC(void)
     else
         TB1CCR2 = 0xFFFF - controllerOutput;
 }
+
+double findAngle(double diffY, double diffX)
+{
+    double angle;
+    angle = atan2(diffY,diffX);
+    if(angle<0)
+        angle+=710.0/113.0;
+    return angle;
+}
+
+int totalPoints(void)
+{
+    if(dataByte1 > prevDataByte1)
+        diffDataByte1 = dataByte1 - prevDataByte1;
+    else
+        diffDataByte1 = prevDataByte1 - dataByte1;
+
+    if(dataByte2 > prevDataByte2)
+        diffDataByte2 = dataByte2 - prevDataByte2;
+    else
+        diffDataByte2 = prevDataByte2 - dataByte2;
+
+    prevDataByte1 = dataByte1;
+    prevDataByte2 = dataByte2;
+
+    if(diffDataByte1>diffDataByte2)
+    {
+        return diffDataByte1;
+    }
+    else
+        return diffDataByte2;
+
+}
+
 /**
  * main.c
  */
@@ -73,15 +115,137 @@ int main(void)
     initializeSolenoid();
 
 
+
     _EINT(); //Global Interrupt Enable
 
 
     while(1)
     {
-
-
-
         motorControlLaw_DC();
+
+        if(flagByteRx == 1)// && machineFlag == Idle)
+        {
+            byteRemoved[0] = buffer[readIndex];
+            readIndex++;
+            bufferLength--;
+            if(readIndex == sizeOfBuffer)
+                readIndex=0;
+
+            if(bufferLength == 0)
+                flagByteRx = 0;
+
+            // Move to a state based on the byte read
+            if(byteRemoved[0] == 255)
+                state = 0;
+            else
+                switch(state)
+                {
+                case 0:  //Differentiate between position and speed data
+                    switch(byteRemoved[0])
+                    {
+                        case StraightLine:  //Position Related Data
+                            command = StraightLine;
+                            state = 1;
+                            break;
+                        case ClockWise: //Speed Related Data
+                            state = 1;
+                            command = ClockWise;
+                            break;
+                        case AntiClockWise:
+                            state = 1;
+                            command = AntiClockWise;
+                            break;
+                        case Rapid:
+                            state = 1;
+                            command = Rapid;
+                            break;
+                        default:
+                            state = 6; //Undefined state
+                            break;
+                    }
+                    break;
+                case 1:
+                    dataByte1 = byteRemoved[0];
+                    state = 2;
+                    break;
+                case 2:
+                    dataByte2 = byteRemoved[0];
+                    state = 3;
+                    break;
+
+                case 3:
+                    dataByte3 = byteRemoved[0];
+                    state = 4;
+                    break;
+
+                case 4:
+                    dataByte4 = byteRemoved[0];
+                    state = 5;
+                    break;
+
+                case 5:
+                    state = 6; //This is an undefined state
+                    escByte = byteRemoved[0];
+
+
+                    if (escByte >=8)
+                    {
+                        dataByte1 = 255;
+                        escByte -= 8;
+                    }
+                    if (escByte >=4)
+                    {
+                        dataByte2 = 255;
+                        escByte -= 4;
+                    }
+                    if (escByte >= 2)
+                    {
+                        dataByte3 = 255;
+                        escByte -= 2;
+                    }
+                    if (escByte >= 1)
+                    {
+                        dataByte4 = 255;
+                        escByte -= 1;
+                    }
+                    if(escByte!=0)
+                    {
+                        //Program should not reach here
+                        __no_operation();                       // For debug only
+                    }
+
+                    machineFlag = Buzy;
+
+                    switch(command)
+                    {
+                        case StraightLine:  //Position Related Data
+                        case Rapid:  //Position Related Data
+                            endPosX = dataByte1 * 105;
+                            endPosY = dataByte2 * 3;
+
+                            n = totalPoints();
+                            break;
+
+                        case ClockWise:  //Position Related Data
+                        case AntiClockWise:  //Position Related Data
+                            endPosX = dataByte1 * 105;
+                            endPosY = dataByte2 * 3;
+                            centerX = dataByte3 * 105;
+                            centerY = dataByte4 * 3;
+
+                            thetaStart =findAngle(prevDataByte2 - dataByte4,prevDataByte1 - dataByte3);
+                            thetaEnd = findAngle(prevDataByte2 - dataByte4,prevDataByte1 - dataByte3);
+
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                }
+
+        }
+
+//        testVar = findAngle(-10,10);
 
         for (i=0;i<20000;i++);
     }
