@@ -87,7 +87,8 @@ int totalPoints(void)
     else
         diffDataByte2 = prevDataByte2 - dataByte2;
 
-
+    prevDataByte1 = dataByte1;
+    prevDataByte2 = dataByte2;
 
     if(diffDataByte1>diffDataByte2)
     {
@@ -239,21 +240,10 @@ int main(void)
                         default:
                             break;
                     }
-
-                    k=0;
-                    prevDataByte1 = dataByte1;
-                    prevDataByte2 = dataByte2;
-                    discretizeFlag==1;
                     break;
                 }
 
         }
-
-        if(machineFlag == Buzy & discretizeFlag==1)
-        {
-
-        }
-
 
 //        testVar = findAngle(-10,10);
 
@@ -407,5 +397,3 @@ __interrupt void Timer0_B1 (void)
               break;
     }
 }
-
-
