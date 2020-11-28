@@ -2,18 +2,20 @@
 #include<math.h>
 #include "initialize.h"
 #define sizeOfBuffer 280
+#define sizeOfBufferMotor 40
 
 enum CommandType {StraightLine = 1, ClockWise = 2, AntiClockWise = 3, Rapid = 4};
 enum MachineStatus {Idle = 1, Buzy = 2};
 char byteRemoved[]=" \n\r";
 volatile unsigned char RxByte;
-volatile unsigned int  bufferLength = 0,readIndex = 0, writeIndex = 0,flagByteRx = 0,escByte,
+volatile unsigned int  bufferLength = 0,readIndex = 0, writeIndex = 0,flagByteRx = 0,escByte, discretizeFlag=0,
         stepperState, steps=0, stepsDesired=0, flagACW = 0, flagCW = 1, moveStepperFlag = 0,state = 6,
-        buffer[sizeOfBuffer],machineFlag = Idle;
+        buffer[sizeOfBuffer],bufferDC[sizeOfBufferMotor],bufferStepper[sizeOfBufferMotor],machineFlag = Idle, bufferLengthMotor = 0, readIndexMotor=0, writeIndexMotor = 0,
+        discretizedPointX,discretizedPointY;
 
-unsigned int i,j, command = 0;
+unsigned int i,j,k, command = 0;
 int positionCurrent , posDesiredDC=0  , error = 0, controllerOutput = 0,
-        dataByte1, dataByte2, dataByte3, dataByte4, endPosX, endPosY,centerX, centerY,
+        dataByte1, dataByte2, dataByte3, dataByte4, endPosX, endPosY,centerX, centerY, startPosX, startPosY,
         prevDataByte1 = 0, prevDataByte2 = 0 ,diffDataByte1, diffDataByte2, n;
 
 
@@ -123,7 +125,7 @@ int main(void)
     {
         motorControlLaw_DC();
 
-        if(flagByteRx == 1)// && machineFlag == Idle)
+        if(flagByteRx == 1 && discretizeFlag == 0)// && machineFlag == Idle)
         {
             byteRemoved[0] = buffer[readIndex];
             readIndex++;
@@ -240,8 +242,39 @@ int main(void)
                         default:
                             break;
                     }
+
+                    k=1;
+                    prevDataByte1 = dataByte1;
+                    prevDataByte2 = dataByte2;
+                    discretizeFlag=1;
                     break;
                 }
+
+        }
+
+        if(machineFlag == Buzy && discretizeFlag == 1 && bufferLengthMotor < sizeOfBufferMotor)
+        {
+            k++;
+            if(command == StraightLine || command == Rapid)
+            {
+                discretizedPointX = startPosX + (endPosX - startPosX)*(k*1.0/n) ;
+                discretizedPointY = startPosY + (endPosY - startPosY)*(k*1.0/n) ;
+            }
+
+
+            bufferDC[writeIndexMotor] = discretizedPointY;
+            bufferStepper[writeIndexMotor] = discretizedPointX;
+            writeIndexMotor++;
+            bufferLengthMotor++;
+            if(writeIndexMotor == sizeOfBufferMotor)
+                writeIndexMotor = 0;
+
+            if(k==n)
+            {
+                discretizeFlag=0;
+                startPosX = endPosX;
+                startPosY = endPosY;
+            }
 
         }
 
