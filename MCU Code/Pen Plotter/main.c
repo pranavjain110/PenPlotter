@@ -2,7 +2,7 @@
 #include<math.h>
 #include "initialize.h"
 #define sizeOfBuffer 70
-#define sizeOfBufferMotor 10
+#define sizeOfBufferMotor 70
 
 enum CommandType {StraightLine = 1, ClockWise = 2, AntiClockWise = 3, Rapid = 4};
 enum MachineStatus {Idle = 1, Buzy = 2};
@@ -300,18 +300,21 @@ int main(void)
         {
 
             k++;
-            if(command == StraightLine || command == Rapid)
+            switch(command)
             {
-                discretizedPointX = startPosX + (endPosX - startPosX)*(k*1.0/n) ;
-                discretizedPointY = startPosY + (endPosY - startPosY)*(k*1.0/n) ;
-            }
-            if(command == AntiClockWise)
-            {
-
-            }
-            if(command == ClockWise)
-            {
-
+                case StraightLine:  //Position Related Data
+                case Rapid:  //Position Related Data
+                    discretizedPointX = startPosX + (endPosX - startPosX)*(k*1.0/n) ;
+                    discretizedPointY = startPosY + (endPosY - startPosY)*(k*1.0/n) ;
+                    break;
+                case ClockWise:  //Position Related Data
+                    discretizedPointX = centerX + radius*105.0*(cosf(thetaStart - (k*(thetaStart - thetaEnd)*1.0/n)));
+                    discretizedPointY = centerY + radius*3.0*(sinf(thetaStart - (k*(thetaStart - thetaEnd)*1.0/n)));
+                    break;
+                case AntiClockWise:  //Position Related Data
+                    discretizedPointX = centerX + radius*105.0*(cosf(thetaStart + (k*(thetaEnd - thetaStart)*1.0/n)));
+                    discretizedPointY = centerY + radius*3.0*(sinf(thetaStart + (k*(thetaEnd - thetaStart)*1.0/n)));
+                    break;
             }
 
 
