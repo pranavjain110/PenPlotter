@@ -1,7 +1,7 @@
 #include <msp430.h> 
 #include<math.h>
 #include "initialize.h"
-#define sizeOfBuffer 280
+#define sizeOfBuffer 70
 #define sizeOfBufferMotor 10
 
 enum CommandType {StraightLine = 1, ClockWise = 2, AntiClockWise = 3, Rapid = 4};
@@ -16,7 +16,7 @@ volatile unsigned int  bufferLength = 0,readIndex = 0, writeIndex = 0,flagByteRx
 unsigned int i,j,k, command = 0;
 int positionCurrent , posDesiredDC=0  , error = 0, controllerOutput = 0,
         dataByte1, dataByte2, dataByte3, dataByte4, endPosX, endPosY,centerX, centerY, startPosX, startPosY,
-        prevDataByte1 = 0, prevDataByte2 = 0 ,diffDataByte1, diffDataByte2, n;
+        prevDataByte1 = 0, prevDataByte2 = 0 ,diffDataByte1, diffDataByte2, n, delX, delY;
 
 
 unsigned const int stepperStateTable[] =  { 1, 0, 0, 0,  //State 1
@@ -28,7 +28,7 @@ unsigned const int stepperStateTable[] =  { 1, 0, 0, 0,  //State 1
                                             0, 0, 0, 1,  //State 7
                                             1, 0, 0, 1 }; //State 8
 
-double ans,thetaStart,thetaEnd;
+double ans,thetaStart,thetaEnd,radius;
 
 //variables for debugging and testing code
 double testVar ;
@@ -79,30 +79,50 @@ double findAngle(double diffY, double diffX)
 
 int totalPoints(void)
 {
-    if(dataByte1 > prevDataByte1)
-        diffDataByte1 = dataByte1 - prevDataByte1;
-    else
-        diffDataByte1 = prevDataByte1 - dataByte1;
 
-    if(dataByte2 > prevDataByte2)
-        diffDataByte2 = dataByte2 - prevDataByte2;
-    else
-        diffDataByte2 = prevDataByte2 - dataByte2;
-
-
-    if(diffDataByte1 >100||diffDataByte2>100)
+    switch(command)
     {
-        testVar =0;
-    }
+        case StraightLine:  //Position Related Data
+        case Rapid:  //Position Related Data
+            if(dataByte1 > prevDataByte1)
+                diffDataByte1 = dataByte1 - prevDataByte1;
+            else
+                diffDataByte1 = prevDataByte1 - dataByte1;
 
-    if(diffDataByte1>diffDataByte2)
-    {
-        return diffDataByte1;
+            if(dataByte2 > prevDataByte2)
+                diffDataByte2 = dataByte2 - prevDataByte2;
+            else
+                diffDataByte2 = prevDataByte2 - dataByte2;
+
+
+            if(diffDataByte1 >100||diffDataByte2>100)
+            {
+                testVar =0;
+            }
+
+            if(diffDataByte1>diffDataByte2)
+            {
+                return diffDataByte1;
+            }
+            else
+                return diffDataByte2;
+            break;
+
+        case ClockWise:  //Position Related Data
+            return (thetaStart - thetaEnd)*20;
+            break;
+        case AntiClockWise:  //Position Related Data
+            return (thetaEnd - thetaStart)*20;
+            break;
+        default:
+
+            break;
     }
-    else
-        return diffDataByte2;
+    return 0;
 
 }
+
+
 
 /**
  * main.c
@@ -238,14 +258,36 @@ int main(void)
                             centerY = dataByte4 * 3;
 
                             thetaStart =findAngle(prevDataByte2 - dataByte4,prevDataByte1 - dataByte3);
-                            thetaEnd = findAngle(prevDataByte2 - dataByte4,prevDataByte1 - dataByte3);
+                            thetaEnd = findAngle(dataByte2 - dataByte4,dataByte1 - dataByte3);
+
+                            if (dataByte2>dataByte4)
+                                delY = dataByte2-dataByte4;
+                            else
+                                delY =dataByte4-dataByte2;
+                            if(dataByte1>dataByte3)
+                                delX = dataByte1 - dataByte3;
+                            else
+                                delX = dataByte3 - dataByte1;
+//
+                            if(delX>delY)
+                                radius= delX*1.0/cosf(thetaEnd);
+                            else
+                                radius= delY*1.0/sinf(thetaEnd);
+
+
+                            if(command==ClockWise && thetaEnd > thetaStart)
+                                thetaStart +=710.0/113.0;
+                            if(command==AntiClockWise && thetaEnd < thetaStart)
+                                thetaEnd +=710.0/113.0;
+
+                            n = totalPoints();
 
                             break;
                         default:
                             break;
                     }
 
-                    k=1;
+                    k=0;
                     prevDataByte1 = dataByte1;
                     prevDataByte2 = dataByte2;
                     discretizeFlag=1;
@@ -254,7 +296,7 @@ int main(void)
 
         }
 
-        if(discretizeFlag == 1 && bufferLengthMotor < sizeOfBufferMotor)
+        if(discretizeFlag == 1 && bufferLengthMotor < sizeOfBufferMotor )
         {
 
             k++;
@@ -263,6 +305,15 @@ int main(void)
                 discretizedPointX = startPosX + (endPosX - startPosX)*(k*1.0/n) ;
                 discretizedPointY = startPosY + (endPosY - startPosY)*(k*1.0/n) ;
             }
+            if(command == AntiClockWise)
+            {
+
+            }
+            if(command == ClockWise)
+            {
+
+            }
+
 
 
             bufferDC[writeIndexMotor] = discretizedPointY;
