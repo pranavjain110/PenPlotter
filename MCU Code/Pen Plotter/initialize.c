@@ -43,7 +43,7 @@ unsigned int initializeStepper(void)
     //_______________________Setting TImerA0 (TA0.1) for stepper_____________________________
 
     TA0CCTL1 |= CCIE; // TBCCR0 interrupt enabled
-    TA0CCR0 = 0x3E00; //0x3C00 is the least possible
+    TA0CCR0 = 0x4500; //0x3C00 is the least possible
     TA0CTL = TASSEL__SMCLK + MC_1 + ID_0; // AMCLK, UP mode
     TA0CCTL1 |=  OUTMOD_4;// Toggle Mode
 
@@ -102,6 +102,6 @@ void initializeSolenoid(void)
 {
     //Setting port P4.0 as output for solenoid mosfet
     P4DIR |= BIT0;
-//    P4OUT &= ~BIT0; //Turn solenoid on
-    P4OUT |= BIT0;   //Turn solenoid off
+    P4OUT &= ~BIT0; //Turn solenoid off
+//    P4OUT |= BIT0;   //Turn solenoid on
 }

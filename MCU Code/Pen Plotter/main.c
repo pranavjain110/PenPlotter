@@ -94,12 +94,6 @@ int totalPoints(void)
             else
                 diffDataByte2 = prevDataByte2 - dataByte2;
 
-
-            if(diffDataByte1 >100||diffDataByte2>100)
-            {
-                testVar =0;
-            }
-
             if(diffDataByte1>diffDataByte2)
             {
                 return diffDataByte1;
@@ -260,19 +254,13 @@ int main(void)
                             thetaStart =findAngle(prevDataByte2 - dataByte4,prevDataByte1 - dataByte3);
                             thetaEnd = findAngle(dataByte2 - dataByte4,dataByte1 - dataByte3);
 
-                            if (dataByte2>dataByte4)
-                                delY = dataByte2-dataByte4;
-                            else
-                                delY =dataByte4-dataByte2;
-                            if(dataByte1>dataByte3)
-                                delX = dataByte1 - dataByte3;
-                            else
-                                delX = dataByte3 - dataByte1;
-//
+                            delY = dataByte2-dataByte4;
+                            delX = dataByte1 - dataByte3;
+
                             if(delX>delY)
-                                radius= delX*1.0/cosf(thetaEnd);
+                            radius= delX*1.0/cosf(thetaEnd);
                             else
-                                radius= delY*1.0/sinf(thetaEnd);
+                            radius= delY*1.0/sinf(thetaEnd);
 
 
                             if(command==ClockWise && thetaEnd > thetaStart)
@@ -286,7 +274,8 @@ int main(void)
                         default:
                             break;
                     }
-
+                    if(n==0)
+                        n=1;
                     k=0;
                     prevDataByte1 = dataByte1;
                     prevDataByte2 = dataByte2;
@@ -302,8 +291,18 @@ int main(void)
             k++;
             switch(command)
             {
-                case StraightLine:  //Position Related Data
                 case Rapid:  //Position Related Data
+                    if(k==1)
+                    {
+                        bufferDC[writeIndexMotor] = 254;
+                        bufferStepper[writeIndexMotor] = 244;
+                        writeIndexMotor++;
+                        bufferLengthMotor++;
+                        if(writeIndexMotor == sizeOfBufferMotor)
+                            writeIndexMotor = 0;
+                    }
+
+                case StraightLine:  //Position Related Data
                     discretizedPointX = startPosX + (endPosX - startPosX)*(k*1.0/n) ;
                     discretizedPointY = startPosY + (endPosY - startPosY)*(k*1.0/n) ;
                     break;
@@ -317,8 +316,6 @@ int main(void)
                     break;
             }
 
-
-
             bufferDC[writeIndexMotor] = discretizedPointY;
             bufferStepper[writeIndexMotor] = discretizedPointX;
             writeIndexMotor++;
@@ -329,8 +326,14 @@ int main(void)
             if(k==n)
             {
                 discretizeFlag=0;
-                startPosX = endPosX;
-                startPosY = endPosY;
+                startPosX = discretizedPointX;
+                startPosY = discretizedPointY;
+                bufferDC[writeIndexMotor] = 255;
+                bufferStepper[writeIndexMotor] = 255;
+                writeIndexMotor++;
+                bufferLengthMotor++;
+                if(writeIndexMotor == sizeOfBufferMotor)
+                    writeIndexMotor = 0;
             }
         }
 
@@ -338,23 +341,26 @@ int main(void)
         {
             byteRemovedMotorDC = bufferDC[readIndexMotor];
             byteRemovedMotorStepper = bufferStepper[readIndexMotor];
-
             readIndexMotor++;
             bufferLengthMotor--;
             if(readIndexMotor == sizeOfBufferMotor)
                 readIndexMotor=0;
 
-            posDesiredDC = byteRemovedMotorDC;
-            stepsDesired = byteRemovedMotorStepper ;
-            machineFlag = Buzy;
-            TA0CCTL1 |= CCIE; // TACCR0 interrupt enabled for stepper
+            if(byteRemovedMotorDC == 255 && byteRemovedMotorDC == 255)
+                P4OUT &= ~BIT0; //Turn solenoid off
+            else if(byteRemovedMotorDC == 254 && byteRemovedMotorDC == 254)
+                P4OUT |= BIT0;   //Turn solenoid on
+            else
+            {
+                posDesiredDC = byteRemovedMotorDC;
+                stepsDesired = byteRemovedMotorStepper ;
+                machineFlag = Buzy;
+                TA0CCTL1 |= CCIE; // TACCR0 interrupt enabled for stepper
+            }
         }
 
 
 
-//        testVar = findAngle(-10,10);
-
-        for (i=0;i<20000;i++);
     }
     return 0;
 }
@@ -455,7 +461,6 @@ __interrupt void Timer_A0 (void)
 #pragma vector = TIMER0_B1_VECTOR
 __interrupt void Timer0_B1 (void)
 {
-    P3OUT ^= BIT1;
     int escVar =0;
     switch( TB0IV )
     {
