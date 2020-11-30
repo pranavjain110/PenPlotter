@@ -90,17 +90,15 @@ namespace Pen_Plotter_App
                 var dataPacket = this.letter[inputChar.ToString()];
 
 
-
+                var scalingFactor = 3.0;
+                
                 for (int i = 0; i < dataPacket.GetLength(0); i++)
                 {
-                    dataPacket[i, 2] *= 3;
-                    dataPacket[i, 3] *= 3;
-                    dataPacket[i, 4] *= 3;
-                    dataPacket[i, 5] *= 3;
-
-
+                    dataPacket[i, 2] = Convert.ToUInt16(dataPacket[i, 2] * 3.0);
+                    dataPacket[i, 3] = Convert.ToUInt16(dataPacket[i, 3] * 3.0);
+                    dataPacket[i, 4] = Convert.ToUInt16(dataPacket[i, 4] * 3.0);
+                    dataPacket[i, 5] = Convert.ToUInt16(dataPacket[i, 5] * 3.0);
                 }
-
 
 
                 serialPort1.Encoding = Encoding.Default;
@@ -114,6 +112,15 @@ namespace Pen_Plotter_App
 
                 Console.WriteLine(b);
             }
+            serialPort1.Encoding = Encoding.Default;
+
+            serialPort1.Write(((char)255).ToString());
+            serialPort1.Write(((char)4).ToString());
+            serialPort1.Write(((char)20).ToString());
+            serialPort1.Write(((char)20).ToString());
+            serialPort1.Write(((char)0).ToString());
+            serialPort1.Write(((char)0).ToString());
+            serialPort1.Write(((char)0).ToString());
 
         }
     }

@@ -25,6 +25,17 @@ namespace Pen_Plotter_App
             { 255, (int)Command.StraightLine, 5, 2, 0, 0, 0 }
         };
 
+        int[,] charB = {
+            { 255, (int)Command.Rapid, 0, 0, 0, 0, 0},
+            { 255, (int)Command.StraightLine, 0, 6, 0, 0, 0 },
+            { 255, (int)Command.StraightLine, 1, 6, 0, 0, 0 },
+            { 255, (int)Command.ClockWise, 1, 4, 1, 5, 0 },
+            { 255, (int)Command.StraightLine, 0, 4, 0, 0, 0 },
+            { 255, (int)Command.StraightLine, 1, 4, 0, 0, 0 },
+            { 255, (int)Command.ClockWise, 1, 0, 1, 2, 0 },
+            { 255, (int)Command.StraightLine, 0, 0, 0, 0, 0 },
+        };
+
         private void updateSerial()
         {
             comboBoxCOMPorts.Items.Clear();
@@ -55,6 +66,7 @@ namespace Pen_Plotter_App
         private void loadLetterDictionary()
         {
             letter.Add("A", charA);
+            letter.Add("B", charA);
         }
 
 

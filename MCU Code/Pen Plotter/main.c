@@ -254,13 +254,24 @@ int main(void)
                             thetaStart =findAngle(prevDataByte2 - dataByte4,prevDataByte1 - dataByte3);
                             thetaEnd = findAngle(dataByte2 - dataByte4,dataByte1 - dataByte3);
 
-                            delY = dataByte2-dataByte4;
-                            delX = dataByte1 - dataByte3;
+//                            delX = dataByte1 - dataByte3;
+//                            delY = dataByte2 - dataByte4;
+
+
+                            if (dataByte2>dataByte4)
+                                delY = dataByte2-dataByte4;
+                            else
+                                delY =dataByte4-dataByte2;
+
+                            if(dataByte1>dataByte3)
+                                delX = dataByte1 - dataByte3;
+                            else
+                                delX = dataByte3 - dataByte1;
 
                             if(delX>delY)
-                            radius= delX*1.0/cosf(thetaEnd);
+                            radius= (dataByte1-dataByte3)*1.0/cosf(thetaEnd);
                             else
-                            radius= delY*1.0/sinf(thetaEnd);
+                            radius= (dataByte2-dataByte4)*1.0/sinf(thetaEnd);
 
 
                             if(command==ClockWise && thetaEnd > thetaStart)
