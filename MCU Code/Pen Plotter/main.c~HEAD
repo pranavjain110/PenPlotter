@@ -1,24 +1,16 @@
 #include <msp430.h> 
 #include<math.h>
 #include "initialize.h"
-#define sizeOfBuffer 150
-#define sizeOfBufferMotor 70
+#define sizeOfBuffer 280
 
-enum CommandType {StraightLine = 1, ClockWise = 2, AntiClockWise = 3, Rapid = 4};
-enum MachineStatus {Idle = 1, Buzy = 2};
-char byteRemoved[]=" \n\r";
 volatile unsigned char RxByte;
-volatile unsigned int  bufferLength = 0,readIndex = 0, writeIndex = 0,flagByteRx = 0,escByte, discretizeFlag=0,
-        stepperState, steps=0, stepsDesired=0, flagACW = 0, flagCW = 1, moveStepperFlag = 0,state = 6,
-        buffer[sizeOfBuffer],bufferDC[sizeOfBufferMotor],bufferStepper[sizeOfBufferMotor],machineFlag = Idle, bufferLengthMotor = 0, readIndexMotor=0, writeIndexMotor = 0,
-        discretizedPointX,discretizedPointY, byteRemovedMotorDC,byteRemovedMotorStepper;
 
-unsigned int i,j,k;
-int positionCurrent , posDesiredDC=0  , error = 0, controllerOutput = 0,
-        dataByte1, dataByte2, dataByte3, dataByte4, endPosX, endPosY,centerX, centerY, startPosX, startPosY,
-        prevDataByte1 = 0, prevDataByte2 = 0 ,diffDataByte1, diffDataByte2, n, delX, delY, escVar =0;
+volatile unsigned int  bufferLength = 0,readIndex = 0, writeIndex = 0,flagByteRx = 0,
+        stepperState, steps=0, stepsDesired=0, flagACW = 0, flagCW = 1, moveStepperFlag = 0,
+        buffer[sizeOfBuffer];
 
-volatile int command = 0;
+unsigned int i,j;
+int positionCurrent , posDesiredDC=200  , error = 0, controllerOutput = 0;
 
 unsigned const int stepperStateTable[] =  { 1, 0, 0, 0,  //State 1
                                             1, 0, 1, 0,  //State 2
@@ -29,10 +21,7 @@ unsigned const int stepperStateTable[] =  { 1, 0, 0, 0,  //State 1
                                             0, 0, 0, 1,  //State 7
                                             1, 0, 0, 1 }; //State 8
 
-double ans,thetaStart,thetaEnd,radius;
-
-//variables for debugging and testing code
-double testVar ;
+double ans ;
 
 
 void  motorControlLaw_DC(void)
@@ -59,15 +48,16 @@ void  motorControlLaw_DC(void)
         }
     }
 
-    MPYS = 4000;
+    MPYS = 2500;
     OP2 = error;
     controllerOutput = RES0;
 
-    if(error>=16)
+    if(error>25)
         TB1CCR2 = 0;
     else
         TB1CCR2 = 0xFFFF - controllerOutput;
 }
+<<<<<<< HEAD:MCU Code/Pen Plotter/main.c
 
 double findAngle(double diffY, double diffX)
 {
@@ -80,45 +70,29 @@ double findAngle(double diffY, double diffX)
 
 int totalPoints(void)
 {
+    if(dataByte1 > prevDataByte1)
+        diffDataByte1 = dataByte1 - prevDataByte1;
+    else
+        diffDataByte1 = prevDataByte1 - dataByte1;
 
-    switch(command)
+    if(dataByte2 > prevDataByte2)
+        diffDataByte2 = dataByte2 - prevDataByte2;
+    else
+        diffDataByte2 = prevDataByte2 - dataByte2;
+
+
+
+    if(diffDataByte1>diffDataByte2)
     {
-        case StraightLine:  //Position Related Data
-        case Rapid:  //Position Related Data
-            if(dataByte1 > prevDataByte1)
-                diffDataByte1 = dataByte1 - prevDataByte1;
-            else
-                diffDataByte1 = prevDataByte1 - dataByte1;
-
-            if(dataByte2 > prevDataByte2)
-                diffDataByte2 = dataByte2 - prevDataByte2;
-            else
-                diffDataByte2 = prevDataByte2 - dataByte2;
-
-            if(diffDataByte1>diffDataByte2)
-            {
-                return diffDataByte1;
-            }
-            else
-                return diffDataByte2;
-            break;
-
-        case ClockWise:  //Position Related Data
-            return (thetaStart - thetaEnd)*20;
-            break;
-        case AntiClockWise:  //Position Related Data
-            return (thetaEnd - thetaStart)*20;
-            break;
-        default:
-
-            break;
+        return diffDataByte1;
     }
-    return 0;
+    else
+        return diffDataByte2;
 
 }
 
-
-
+=======
+>>>>>>> parent of eeb2cca... Ready data packets:MCU Code/Pen Plotter V2/main.c
 /**
  * main.c
  */
@@ -135,15 +109,14 @@ int main(void)
     initializeSolenoid();
 
 
-
     _EINT(); //Global Interrupt Enable
 
 
     while(1)
     {
-        motorControlLaw_DC();
 
-        if(flagByteRx == 1 && discretizeFlag == 0 && bufferLengthMotor==0)// && machineFlag == Idle)
+<<<<<<< HEAD:MCU Code/Pen Plotter/main.c
+        if(flagByteRx == 1)// && machineFlag == Idle)
         {
             byteRemoved[0] = buffer[readIndex];
             readIndex++;
@@ -234,6 +207,7 @@ int main(void)
                         __no_operation();                       // For debug only
                     }
 
+                    machineFlag = Buzy;
 
                     switch(command)
                     {
@@ -253,169 +227,36 @@ int main(void)
                             centerY = dataByte4 * 3;
 
                             thetaStart =findAngle(prevDataByte2 - dataByte4,prevDataByte1 - dataByte3);
-                            thetaEnd = findAngle(dataByte2 - dataByte4,dataByte1 - dataByte3);
-
-//                            delX = dataByte1 - dataByte3;
-//                            delY = dataByte2 - dataByte4;
-
-
-                            if (dataByte2>dataByte4)
-                                delY = dataByte2-dataByte4;
-                            else
-                                delY =dataByte4-dataByte2;
-
-                            if(dataByte1>dataByte3)
-                                delX = dataByte1 - dataByte3;
-                            else
-                                delX = dataByte3 - dataByte1;
-
-                            if(delX>delY)
-                            radius= (dataByte1-dataByte3)*1.0/cosf(thetaEnd);
-                            else
-                            radius= (dataByte2-dataByte4)*1.0/sinf(thetaEnd);
-
-
-                            if(command==ClockWise && thetaEnd > thetaStart)
-                                thetaStart +=710.0/113.0;
-                            if(command==AntiClockWise && thetaEnd < thetaStart)
-                                thetaEnd +=710.0/113.0;
-
-                            n = totalPoints();
+                            thetaEnd = findAngle(prevDataByte2 - dataByte4,prevDataByte1 - dataByte3);
 
                             break;
                         default:
                             break;
                     }
-                    if(n==0)
-                        n=1;
+
                     k=0;
                     prevDataByte1 = dataByte1;
                     prevDataByte2 = dataByte2;
-                    discretizeFlag=1;
+                    discretizeFlag==1;
                     break;
                 }
+=======
+>>>>>>> parent of eeb2cca... Ready data packets:MCU Code/Pen Plotter V2/main.c
 
-        }
 
-        if(discretizeFlag == 1 && bufferLengthMotor < sizeOfBufferMotor )
+<<<<<<< HEAD:MCU Code/Pen Plotter/main.c
+        if(machineFlag == Buzy & discretizeFlag==1)
         {
 
-            k++;
-            switch(command)
-            {
-                case Rapid:  //Position Related Data
-                    if(k==1)
-                    {
-                        bufferDC[writeIndexMotor] = 254;
-                        bufferStepper[writeIndexMotor] = 244;
-                        writeIndexMotor++;
-                        bufferLengthMotor++;
-                        if(writeIndexMotor == sizeOfBufferMotor)
-                            writeIndexMotor = 0;
-                    }
-
-                case StraightLine:  //Position Related Data
-                    discretizedPointX = startPosX + (endPosX - startPosX)*(k*1.0/n) ;
-                    discretizedPointY = startPosY + (endPosY - startPosY)*(k*1.0/n) ;
-                    break;
-                case ClockWise:  //Position Related Data
-                    discretizedPointX = centerX + radius*105.0*(cosf(thetaStart - (k*(thetaStart - thetaEnd)*1.0/n)));
-                    discretizedPointY = centerY + radius*3.0*(sinf(thetaStart - (k*(thetaStart - thetaEnd)*1.0/n)));
-                    break;
-                case AntiClockWise:  //Position Related Data
-                    discretizedPointX = centerX + radius*105.0*(cosf(thetaStart + (k*(thetaEnd - thetaStart)*1.0/n)));
-                    discretizedPointY = centerY + radius*3.0*(sinf(thetaStart + (k*(thetaEnd - thetaStart)*1.0/n)));
-                    break;
-            }
-
-            bufferDC[writeIndexMotor] = discretizedPointY;
-            bufferStepper[writeIndexMotor] = discretizedPointX;
-            writeIndexMotor++;
-            bufferLengthMotor++;
-            if(writeIndexMotor == sizeOfBufferMotor)
-                writeIndexMotor = 0;
-
-            if(k==n)
-            {
-                discretizeFlag=0;
-                startPosX = discretizedPointX;
-                startPosY = discretizedPointY;
-                bufferDC[writeIndexMotor] = 255;
-                bufferStepper[writeIndexMotor] = 255;
-                writeIndexMotor++;
-                bufferLengthMotor++;
-                if(writeIndexMotor == sizeOfBufferMotor)
-                    writeIndexMotor = 0;
-            }
-        }
-
-        if(bufferLengthMotor > 0 && machineFlag == Idle && error < 2)
-        {
-            byteRemovedMotorDC = bufferDC[readIndexMotor];
-            byteRemovedMotorStepper = bufferStepper[readIndexMotor];
-            readIndexMotor++;
-            bufferLengthMotor--;
-            if(readIndexMotor == sizeOfBufferMotor)
-                readIndexMotor=0;
-
-            if(byteRemovedMotorDC == 255 && byteRemovedMotorDC == 255)
-                P4OUT &= ~BIT0; //Turn solenoid off
-            else if(byteRemovedMotorDC == 254 && byteRemovedMotorDC == 254)
-                P4OUT |= BIT0;   //Turn solenoid on
-            else
-            {
-                posDesiredDC = byteRemovedMotorDC;
-                stepsDesired = byteRemovedMotorStepper ;
-                machineFlag = Buzy;
-                TA0CCTL1 |= CCIE; // TACCR0 interrupt enabled for stepper
-            }
         }
 
 
+//        testVar = findAngle(-10,10);
+=======
+        motorControlLaw_DC();
+>>>>>>> parent of eeb2cca... Ready data packets:MCU Code/Pen Plotter V2/main.c
 
-
-        escVar =0;
-        //Send Data
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-                UCA0TXBUF = 255;
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-        if(TA1R>>8 == 255)
-        {
-            UCA0TXBUF = 0;
-            escVar +=8;
-        }
-        else
-            UCA0TXBUF = TA1R>>8;
-
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-        if((TA1R<<8)>>8 == 255)
-          {
-              UCA0TXBUF = 0;
-              escVar +=4;
-          }
-        else
-            UCA0TXBUF = TA1R;
-
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-        if(TB2R>>8 == 255)
-        {
-            UCA0TXBUF = 0;
-            escVar +=2;
-        }
-        else
-            UCA0TXBUF =TB2R>>8;
-
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-        if((TB2R<<8)>>8 == 255)
-          {
-              UCA0TXBUF = 0;
-              escVar +=1;
-          }
-        else
-                UCA0TXBUF =TB2R;
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-                UCA0TXBUF = escVar;
-
+        for (i=0;i<20000;i++);
     }
     return 0;
 }
@@ -462,7 +303,6 @@ __interrupt void Timer_A0 (void)
         moveStepperFlag = 0;
         flagACW = 0;
         __no_operation();
-        machineFlag = Idle;
         TA0CCTL1 &= ~CCIE; // TBCCR0 interrupt disabled
     }
 
@@ -516,7 +356,8 @@ __interrupt void Timer_A0 (void)
 #pragma vector = TIMER0_B1_VECTOR
 __interrupt void Timer0_B1 (void)
 {
-    escVar =0;
+    P3OUT ^= BIT1;
+    int escVar =0;
     switch( TB0IV )
     {
       case 4:
@@ -565,3 +406,5 @@ __interrupt void Timer0_B1 (void)
               break;
     }
 }
+
+

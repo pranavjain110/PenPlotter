@@ -38,6 +38,9 @@
             this.txtSerialData = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.textBoxStringInput = new System.Windows.Forms.TextBox();
+            this.textBoxPosX = new System.Windows.Forms.TextBox();
+            this.textBoxPosY = new System.Windows.Forms.TextBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // comboBoxCOMPorts
@@ -101,7 +104,7 @@
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(207, 73);
+            this.button3.Location = new System.Drawing.Point(207, 140);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(133, 96);
             this.button3.TabIndex = 92;
@@ -112,16 +115,48 @@
             // textBoxStringInput
             // 
             this.textBoxStringInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxStringInput.Location = new System.Drawing.Point(40, 110);
+            this.textBoxStringInput.Location = new System.Drawing.Point(51, 177);
             this.textBoxStringInput.Name = "textBoxStringInput";
-            this.textBoxStringInput.Size = new System.Drawing.Size(64, 22);
+            this.textBoxStringInput.Size = new System.Drawing.Size(134, 22);
             this.textBoxStringInput.TabIndex = 93;
+            // 
+            // textBoxPosX
+            // 
+            this.textBoxPosX.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxPosX.Location = new System.Drawing.Point(51, 97);
+            this.textBoxPosX.Name = "textBoxPosX";
+            this.textBoxPosX.Size = new System.Drawing.Size(64, 22);
+            this.textBoxPosX.TabIndex = 94;
+            this.textBoxPosX.Text = "0";
+            // 
+            // textBoxPosY
+            // 
+            this.textBoxPosY.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxPosY.Location = new System.Drawing.Point(121, 97);
+            this.textBoxPosY.Name = "textBoxPosY";
+            this.textBoxPosY.Size = new System.Drawing.Size(64, 22);
+            this.textBoxPosY.TabIndex = 95;
+            this.textBoxPosY.Text = "0";
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(207, 97);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(133, 22);
+            this.button1.TabIndex = 96;
+            this.button1.Text = "Send Command";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.textBoxPosY);
+            this.Controls.Add(this.textBoxPosX);
             this.Controls.Add(this.textBoxStringInput);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.txtSerialData);
@@ -148,6 +183,9 @@
         private System.Windows.Forms.TextBox txtSerialData;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textBoxStringInput;
+        private System.Windows.Forms.TextBox textBoxPosX;
+        private System.Windows.Forms.TextBox textBoxPosY;
+        private System.Windows.Forms.Button button1;
     }
 }
 

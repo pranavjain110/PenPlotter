@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -18,7 +19,8 @@ namespace Pen_Plotter_App
 
         ConcurrentQueue<Int32> dataQueue = new ConcurrentQueue<Int32>();
         ConcurrentQueue<string> timeQueue = new ConcurrentQueue<string>();
-        Dictionary<string, int[,]> letter = new Dictionary<string, int[,]>();
+        Dictionary<string, double[,]> letter = new Dictionary<string, double[,]>();
+        int startPosX = 0, startPosY = 0;
 
 
 
@@ -82,22 +84,41 @@ namespace Pen_Plotter_App
 
         private void button3_Click(object sender, EventArgs e)
         {
+            int milliseconds = 400;
+
+            int offsetX = startPosX;
+            int offsetY = startPosY;
             foreach (var inputChar in textBoxStringInput.Text)
             {
 
                 var b = 0;
+                var tempDictionary = new Dictionary<string, double[,]>(letter);
+                var dataPacket = tempDictionary[inputChar.ToString()];
 
-                var dataPacket = this.letter[inputChar.ToString()];
 
+                var scalingFactor = 2.0;
 
-                var scalingFactor = 3.0;
-                
                 for (int i = 0; i < dataPacket.GetLength(0); i++)
                 {
-                    dataPacket[i, 2] = Convert.ToUInt16(dataPacket[i, 2] * 3.0);
-                    dataPacket[i, 3] = Convert.ToUInt16(dataPacket[i, 3] * 3.0);
-                    dataPacket[i, 4] = Convert.ToUInt16(dataPacket[i, 4] * 3.0);
-                    dataPacket[i, 5] = Convert.ToUInt16(dataPacket[i, 5] * 3.0);
+                    if (i == dataPacket.GetLength(0) - 1)
+                    {
+                        offsetX += Convert.ToUInt16(dataPacket[i, 2] * scalingFactor) + 2;
+                    }
+                    else
+                    {
+
+                        serialPort1.Encoding = Encoding.Default;
+                        serialPort1.Write(((char)Convert.ToUInt16(dataPacket[i, 0] * 1)).ToString());
+                        serialPort1.Write(((char)Convert.ToUInt16(dataPacket[i, 1] * 1)).ToString());
+
+                        serialPort1.Write(((char)(Convert.ToUInt16(dataPacket[i, 2] * scalingFactor + offsetX))).ToString());
+                        serialPort1.Write(((char)Convert.ToUInt16(dataPacket[i, 3] * scalingFactor + offsetY)).ToString());
+
+                        serialPort1.Write(((char)(Convert.ToUInt16(dataPacket[i, 4] * scalingFactor + offsetX))).ToString());
+                        serialPort1.Write(((char)Convert.ToUInt16(dataPacket[i, 5] * scalingFactor + offsetY)).ToString());
+
+                        serialPort1.Write(((char)Convert.ToUInt16(dataPacket[i, 6] * 1)).ToString());
+                    }
                 }
 
 
@@ -106,7 +127,8 @@ namespace Pen_Plotter_App
                 foreach (var dataByte in dataPacket)
                 {
 
-                        serialPort1.Write(((char)dataByte ).ToString());
+                        //serialPort1.Write(((char)dataByte ).ToString());
+                        //Thread.Sleep(milliseconds);
                 }
 
 
@@ -114,14 +136,44 @@ namespace Pen_Plotter_App
             }
             serialPort1.Encoding = Encoding.Default;
 
-            serialPort1.Write(((char)255).ToString());
+/*            serialPort1.Write(((char)255).ToString());
+            Thread.Sleep(milliseconds);
+
             serialPort1.Write(((char)4).ToString());
-            serialPort1.Write(((char)20).ToString());
-            serialPort1.Write(((char)20).ToString());
+
+            Thread.Sleep(milliseconds);
+            serialPort1.Write(((char)0).ToString());
+
+            Thread.Sleep(milliseconds);
+            serialPort1.Write(((char)0).ToString());
+
+            Thread.Sleep(milliseconds);
+            serialPort1.Write(((char)0).ToString());
+
+            Thread.Sleep(milliseconds);
+            serialPort1.Write(((char)0).ToString());
+
+            Thread.Sleep(milliseconds);
+            serialPort1.Write(((char)0).ToString());*/
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            serialPort1.Encoding = Encoding.Default;
+
+            startPosX = Convert.ToUInt16(textBoxPosX.Text);
+            startPosY = Convert.ToUInt16(textBoxPosY.Text);
+
+            serialPort1.Write(((char)255).ToString());
+            serialPort1.Write(((char)Command.Rapid).ToString());
+            serialPort1.Write(((char)startPosX).ToString());
+            serialPort1.Write(((char)startPosY).ToString());
             serialPort1.Write(((char)0).ToString());
             serialPort1.Write(((char)0).ToString());
             serialPort1.Write(((char)0).ToString());
 
+            
         }
     }
 }

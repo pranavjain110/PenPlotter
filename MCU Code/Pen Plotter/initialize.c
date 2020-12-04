@@ -31,9 +31,9 @@ void initializeUART(void)
     UCA0IE |= UCRXIE; //eUSCI_A interrupt enable for when a byte is received
 
     //setting TImerB0 (TB0.2) for regularly sending reading over UART
-    TB0CCTL2 = CCIE; // TBCCR1 interrupt enabled
-    TB0CCR0 = 0xFFFF;;
-    TB0CTL = TBSSEL_1 + MC_1 + ID_3; // AMCLK, UP mode(counts up to TBCCR0, /8)
+    //TB0CCTL2 = CCIE; // TBCCR1 interrupt enabled
+//    TB0CCR0 = 0xFFFF;;
+//    TB0CTL = TBSSEL_1 + MC_1 + ID_3; // AMCLK, UP mode(counts up to TBCCR0, /8)
 
     return;
 }
