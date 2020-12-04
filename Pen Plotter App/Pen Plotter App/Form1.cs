@@ -98,6 +98,7 @@ namespace Pen_Plotter_App
 
                 var scalingFactor = 2.0;
 
+                
                 for (int i = 0; i < dataPacket.GetLength(0); i++)
                 {
                     if (i == dataPacket.GetLength(0) - 1)
@@ -136,25 +137,7 @@ namespace Pen_Plotter_App
             }
             serialPort1.Encoding = Encoding.Default;
 
-/*            serialPort1.Write(((char)255).ToString());
-            Thread.Sleep(milliseconds);
 
-            serialPort1.Write(((char)4).ToString());
-
-            Thread.Sleep(milliseconds);
-            serialPort1.Write(((char)0).ToString());
-
-            Thread.Sleep(milliseconds);
-            serialPort1.Write(((char)0).ToString());
-
-            Thread.Sleep(milliseconds);
-            serialPort1.Write(((char)0).ToString());
-
-            Thread.Sleep(milliseconds);
-            serialPort1.Write(((char)0).ToString());
-
-            Thread.Sleep(milliseconds);
-            serialPort1.Write(((char)0).ToString());*/
 
         }
 
@@ -166,7 +149,7 @@ namespace Pen_Plotter_App
             startPosY = Convert.ToUInt16(textBoxPosY.Text);
 
             serialPort1.Write(((char)255).ToString());
-            serialPort1.Write(((char)Command.Rapid).ToString());
+            serialPort1.Write(((char)Command.StraightLine).ToString());
             serialPort1.Write(((char)startPosX).ToString());
             serialPort1.Write(((char)startPosY).ToString());
             serialPort1.Write(((char)0).ToString());

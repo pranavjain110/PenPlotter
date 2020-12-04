@@ -43,7 +43,7 @@ unsigned int initializeStepper(void)
     //_______________________Setting TImerA0 (TA0.1) for stepper_____________________________
 
     TA0CCTL1 |= CCIE; // TBCCR0 interrupt enabled
-    TA0CCR0 = 0x4500; //0x3C00 is the least possible
+    TA0CCR0 = 0x4000; //0x3C00 is the least possible
     TA0CTL = TASSEL__SMCLK + MC_1 + ID_0; // AMCLK, UP mode
     TA0CCTL1 |=  OUTMOD_4;// Toggle Mode
 

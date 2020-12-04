@@ -379,6 +379,9 @@ int main(void)
         while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
                 UCA0TXBUF = 255;
         while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+                UCA0TXBUF = bufferLength;
+
+        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
         if(TA1R>>8 == 255)
         {
             UCA0TXBUF = 0;
@@ -513,55 +516,55 @@ __interrupt void Timer_A0 (void)
     }
 }
 
-#pragma vector = TIMER0_B1_VECTOR
-__interrupt void Timer0_B1 (void)
-{
-    escVar =0;
-    switch( TB0IV )
-    {
-      case 4:
-          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-                  UCA0TXBUF = 255;
-          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-          if(TA1R>>8 == 255)
-          {
-              UCA0TXBUF = 0;
-              escVar +=8;
-          }
-          else
-              UCA0TXBUF = TA1R>>8;
-
-          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-          if((TA1R<<8)>>8 == 255)
-            {
-                UCA0TXBUF = 0;
-                escVar +=4;
-            }
-          else
-              UCA0TXBUF = TA1R;
-
-          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-          if(TB2R>>8 == 255)
-          {
-              UCA0TXBUF = 0;
-              escVar +=2;
-          }
-          else
-              UCA0TXBUF =TB2R>>8;
-
-          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-          if((TB2R<<8)>>8 == 255)
-            {
-                UCA0TXBUF = 0;
-                escVar +=1;
-            }
-          else
-                  UCA0TXBUF =TB2R;
-          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-                  UCA0TXBUF = escVar;
-          break;
-      default:
-          __no_operation;
-              break;
-    }
-}
+//#pragma vector = TIMER0_B1_VECTOR
+//__interrupt void Timer0_B1 (void)
+//{
+//    escVar =0;
+//    switch( TB0IV )
+//    {
+//      case 4:
+//          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+//                  UCA0TXBUF = 255;
+//          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+//          if(TA1R>>8 == 255)
+//          {
+//              UCA0TXBUF = 0;
+//              escVar +=8;
+//          }
+//          else
+//              UCA0TXBUF = TA1R>>8;
+//
+//          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+//          if((TA1R<<8)>>8 == 255)
+//            {
+//                UCA0TXBUF = 0;
+//                escVar +=4;
+//            }
+//          else
+//              UCA0TXBUF = TA1R;
+//
+//          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+//          if(TB2R>>8 == 255)
+//          {
+//              UCA0TXBUF = 0;
+//              escVar +=2;
+//          }
+//          else
+//              UCA0TXBUF =TB2R>>8;
+//
+//          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+//          if((TB2R<<8)>>8 == 255)
+//            {
+//                UCA0TXBUF = 0;
+//                escVar +=1;
+//            }
+//          else
+//                  UCA0TXBUF =TB2R;
+//          while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+//                  UCA0TXBUF = escVar;
+//          break;
+//      default:
+//          __no_operation;
+//              break;
+//    }
+//}
