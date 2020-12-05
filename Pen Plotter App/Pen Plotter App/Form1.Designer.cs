@@ -64,7 +64,7 @@
             // 
             label4.AutoSize = true;
             label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label4.Location = new System.Drawing.Point(105, 314);
+            label4.Location = new System.Drawing.Point(119, 325);
             label4.Name = "label4";
             label4.Size = new System.Drawing.Size(58, 18);
             label4.TabIndex = 99;
@@ -74,7 +74,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label1.Location = new System.Drawing.Point(12, 72);
+            label1.Location = new System.Drawing.Point(26, 83);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(142, 18);
             label1.TabIndex = 100;
@@ -85,7 +85,7 @@
             // 
             label2.AutoSize = true;
             label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label2.Location = new System.Drawing.Point(9, 155);
+            label2.Location = new System.Drawing.Point(23, 159);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(160, 18);
             label2.TabIndex = 101;
@@ -95,7 +95,7 @@
             // 
             label3.AutoSize = true;
             label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label3.Location = new System.Drawing.Point(44, 354);
+            label3.Location = new System.Drawing.Point(58, 365);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(119, 18);
             label3.TabIndex = 104;
@@ -105,7 +105,7 @@
             // 
             label5.AutoSize = true;
             label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label5.Location = new System.Drawing.Point(78, 222);
+            label5.Location = new System.Drawing.Point(92, 226);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(85, 18);
             label5.TabIndex = 105;
@@ -114,7 +114,7 @@
             // comboBoxCOMPorts
             // 
             this.comboBoxCOMPorts.FormattingEnabled = true;
-            this.comboBoxCOMPorts.Location = new System.Drawing.Point(12, 19);
+            this.comboBoxCOMPorts.Location = new System.Drawing.Point(26, 30);
             this.comboBoxCOMPorts.Name = "comboBoxCOMPorts";
             this.comboBoxCOMPorts.Size = new System.Drawing.Size(153, 21);
             this.comboBoxCOMPorts.TabIndex = 10;
@@ -123,7 +123,7 @@
             // btnDisconnectSerial
             // 
             this.btnDisconnectSerial.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDisconnectSerial.Location = new System.Drawing.Point(193, 15);
+            this.btnDisconnectSerial.Location = new System.Drawing.Point(207, 26);
             this.btnDisconnectSerial.Name = "btnDisconnectSerial";
             this.btnDisconnectSerial.Size = new System.Drawing.Size(133, 29);
             this.btnDisconnectSerial.TabIndex = 9;
@@ -139,6 +139,7 @@
             // timer1
             // 
             this.timer1.Enabled = true;
+            this.timer1.Interval = 80;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // txtItemsInQueue
@@ -166,13 +167,13 @@
             this.txtSerialData.Location = new System.Drawing.Point(602, 337);
             this.txtSerialData.Multiline = true;
             this.txtSerialData.Name = "txtSerialData";
-            this.txtSerialData.Size = new System.Drawing.Size(26, 144);
+            this.txtSerialData.Size = new System.Drawing.Size(51, 168);
             this.txtSerialData.TabIndex = 85;
             // 
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(193, 183);
+            this.button3.Location = new System.Drawing.Point(207, 187);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(133, 29);
             this.button3.TabIndex = 92;
@@ -183,7 +184,7 @@
             // textBoxStringInput
             // 
             this.textBoxStringInput.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxStringInput.Location = new System.Drawing.Point(10, 186);
+            this.textBoxStringInput.Location = new System.Drawing.Point(24, 190);
             this.textBoxStringInput.Name = "textBoxStringInput";
             this.textBoxStringInput.Size = new System.Drawing.Size(153, 22);
             this.textBoxStringInput.TabIndex = 93;
@@ -191,7 +192,7 @@
             // textBoxPosX
             // 
             this.textBoxPosX.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxPosX.Location = new System.Drawing.Point(12, 103);
+            this.textBoxPosX.Location = new System.Drawing.Point(26, 114);
             this.textBoxPosX.Name = "textBoxPosX";
             this.textBoxPosX.Size = new System.Drawing.Size(64, 22);
             this.textBoxPosX.TabIndex = 94;
@@ -200,7 +201,7 @@
             // textBoxPosY
             // 
             this.textBoxPosY.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxPosY.Location = new System.Drawing.Point(99, 103);
+            this.textBoxPosY.Location = new System.Drawing.Point(113, 114);
             this.textBoxPosY.Name = "textBoxPosY";
             this.textBoxPosY.Size = new System.Drawing.Size(64, 22);
             this.textBoxPosY.TabIndex = 95;
@@ -209,7 +210,7 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(193, 100);
+            this.button1.Location = new System.Drawing.Point(207, 111);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(133, 29);
             this.button1.TabIndex = 96;
@@ -221,7 +222,7 @@
             // 
             this.textBoxMachineStatus.BackColor = System.Drawing.Color.LimeGreen;
             this.textBoxMachineStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxMachineStatus.Location = new System.Drawing.Point(191, 313);
+            this.textBoxMachineStatus.Location = new System.Drawing.Point(205, 324);
             this.textBoxMachineStatus.Name = "textBoxMachineStatus";
             this.textBoxMachineStatus.Size = new System.Drawing.Size(133, 22);
             this.textBoxMachineStatus.TabIndex = 97;
@@ -236,7 +237,7 @@
             // textBoxPosStepper
             // 
             this.textBoxPosStepper.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxPosStepper.Location = new System.Drawing.Point(189, 352);
+            this.textBoxPosStepper.Location = new System.Drawing.Point(203, 363);
             this.textBoxPosStepper.Name = "textBoxPosStepper";
             this.textBoxPosStepper.Size = new System.Drawing.Size(62, 22);
             this.textBoxPosStepper.TabIndex = 102;
@@ -244,7 +245,7 @@
             // textBoxPosDC
             // 
             this.textBoxPosDC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxPosDC.Location = new System.Drawing.Point(262, 352);
+            this.textBoxPosDC.Location = new System.Drawing.Point(276, 363);
             this.textBoxPosDC.Name = "textBoxPosDC";
             this.textBoxPosDC.Size = new System.Drawing.Size(62, 22);
             this.textBoxPosDC.TabIndex = 103;
@@ -252,7 +253,7 @@
             // textBoxScalingFactor
             // 
             this.textBoxScalingFactor.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxScalingFactor.Location = new System.Drawing.Point(191, 220);
+            this.textBoxScalingFactor.Location = new System.Drawing.Point(207, 225);
             this.textBoxScalingFactor.Name = "textBoxScalingFactor";
             this.textBoxScalingFactor.Size = new System.Drawing.Size(135, 22);
             this.textBoxScalingFactor.TabIndex = 106;
@@ -262,7 +263,7 @@
             // 
             label6.AutoSize = true;
             label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            label6.Location = new System.Drawing.Point(5, 281);
+            label6.Location = new System.Drawing.Point(118, 289);
             label6.Name = "label6";
             label6.Size = new System.Drawing.Size(158, 20);
             label6.TabIndex = 107;
@@ -272,7 +273,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(345, 385);
+            this.ClientSize = new System.Drawing.Size(370, 409);
             this.Controls.Add(label6);
             this.Controls.Add(this.textBoxScalingFactor);
             this.Controls.Add(label5);

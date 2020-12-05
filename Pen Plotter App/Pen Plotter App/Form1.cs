@@ -238,6 +238,7 @@ namespace Pen_Plotter_App
                     }
                 }
 
+                 tempDictionary = new Dictionary<string, double[,]>();
 
                 serialPort1.Encoding = Encoding.Default;
 
@@ -269,7 +270,7 @@ namespace Pen_Plotter_App
 
 
             commandToSend.Enqueue(255);
-            commandToSend.Enqueue(1);
+            commandToSend.Enqueue(4);
             commandToSend.Enqueue(startPosX);
             commandToSend.Enqueue(startPosY);
             commandToSend.Enqueue(0);

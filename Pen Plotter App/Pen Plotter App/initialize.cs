@@ -24,7 +24,7 @@ namespace Pen_Plotter_App
             { 255, (int)Command.StraightLine, 6, 0, 0, 0, 0 },
             { 255, (int)Command.Rapid, 1, 2, 0, 0, 0 },
             { 255, (int)Command.StraightLine, 5, 2, 0, 0, 0 },
-            { 255, (int)Command.Offset, 7 , 0, 0, 0, 0}
+            { 255, (int)Command.Offset, 6 , 0, 0, 0, 0}
         };
 
 
@@ -34,17 +34,17 @@ namespace Pen_Plotter_App
             { 255, (int)Command.StraightLine, 0, 6, 0, 0, 0 },
             { 255, (int)Command.StraightLine, 2, 6, 0, 0, 0 },
             { 255, (int)Command.ClockWise, 2, 3, 2, 4.5, 0 },
-            { 255, (int)Command.StraightLine, 0, 3, 0, 0, 0 },
+            { 255, (int)Command.StraightLine, -0.5, 3, 0, 0, 0 },
             { 255, (int)Command.StraightLine, 2, 3, 0, 0, 0 },
             { 255, (int)Command.ClockWise, 2, 0, 2, 1.5, 0 },
-            { 255, (int)Command.StraightLine, 0, 0, 0, 0, 0 },
+            { 255, (int)Command.StraightLine, -0.5, 0, 0, 0, 0 },
             { 255, (int)Command.Offset, 3.5 , 0, 0, 0, 0}
         };
 
         double[,] charC = {
             { 255, (int)Command.Rapid, 3, 6, 0, 0, 0},
             { 255, (int)Command.AntiClockWise, 3, 0, 3, 3, 0 },
-            { 255, (int)Command.Offset, 3 , 0, 0, 0, 0}
+            { 255, (int)Command.Offset, 4, 0, 0, 0, 0}
         };
 
         double[,] charD = {
@@ -160,12 +160,12 @@ namespace Pen_Plotter_App
             { 255, (int)Command.Offset, 6 , 0, 0, 0, 0}
         };
         double[,] charP = {
-            { 255, (int)Command.Rapid, 0, 0, 0, 0, 0},
-            { 255, (int)Command.StraightLine, 0, 6, 0, 0, 0 },
-            { 255, (int)Command.StraightLine, 2, 6, 0, 0, 0 },
-            { 255, (int)Command.ClockWise, 2, 3, 2, 4.5, 0 },
+            { 255, (int)Command.Rapid, 0.5, 0, 0, 0, 0},
+            { 255, (int)Command.StraightLine, 0.5, 6, 0, 0, 0 },
+            { 255, (int)Command.StraightLine, 2.5, 6, 0, 0, 0 },
+            { 255, (int)Command.ClockWise, 2.5, 3, 2.5, 4.5, 0 },
             { 255, (int)Command.StraightLine, 0, 3, 0, 0, 0 },
-            { 255, (int)Command.Offset, 3.5 , 0, 0, 0, 0}
+            { 255, (int)Command.Offset, 4 , 0, 0, 0, 0}
         };
 
         double[,] charQ = {
@@ -177,11 +177,11 @@ namespace Pen_Plotter_App
             { 255, (int)Command.Offset, 6 , 0, 0, 0, 0}
         };
 
-        double[,] charR = { 
-            { 255, (int)Command.Rapid, 0, 0, 0, 0, 0},
-            { 255, (int)Command.StraightLine, 0, 6, 0, 0, 0 },
-            { 255, (int)Command.StraightLine, 2, 6, 0, 0, 0 },
-            { 255, (int)Command.ClockWise, 2, 3, 2, 4.5, 0 },
+        double[,] charR = {
+            { 255, (int)Command.Rapid, 0.5, 0, 0, 0, 0},
+            { 255, (int)Command.StraightLine, 0.5, 6, 0, 0, 0 },
+            { 255, (int)Command.StraightLine, 2.5, 6, 0, 0, 0 },
+            { 255, (int)Command.ClockWise, 2.5, 3, 2.5, 4.5, 0 },
             { 255, (int)Command.StraightLine, 0, 3, 0, 0, 0 },
             { 255, (int)Command.StraightLine, 4.5, 0, 0, 0, 0 },
             { 255, (int)Command.Offset, 4.5 , 0, 0, 0, 0}
@@ -222,9 +222,9 @@ namespace Pen_Plotter_App
 
         double[,] charV = {
             { 255, (int)Command.Rapid, 0, 6, 0, 0, 0},
-            { 255, (int)Command.StraightLine, 2.5, 0, 0, 0, 0 },
-            { 255, (int)Command.StraightLine, 5, 6, 0, 0, 0 },
-            { 255, (int)Command.Offset, 5 , 0, 0, 0, 0}
+            { 255, (int)Command.StraightLine, 2, 0, 0, 0, 0 },
+            { 255, (int)Command.StraightLine, 4, 6, 0, 0, 0 },
+            { 255, (int)Command.Offset, 4 , 0, 0, 0, 0}
         };
 
         double[,] charW = {

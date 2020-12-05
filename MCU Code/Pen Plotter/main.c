@@ -18,7 +18,7 @@ int positionCurrent , posDesiredDC=0  , error = 0, controllerOutput = 0,
         dataByte1, dataByte2, dataByte3, dataByte4, endPosX, endPosY,centerX, centerY, startPosX, startPosY,
         prevDataByte1 = 0, prevDataByte2 = 0 ,diffDataByte1, diffDataByte2, n, delX, delY, escVar =0;
 
-volatile int command = 0;
+volatile int command = 0,dataCount =0;
 
 unsigned const int stepperStateTable[] =  { 1, 0, 0, 0,  //State 1
                                             1, 0, 1, 0,  //State 2
@@ -372,52 +372,57 @@ int main(void)
         }
 
 
-
-
-        escVar =0;
-        //Send Data
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-                UCA0TXBUF = 255;
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-                UCA0TXBUF = bufferLength;
-
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-        if(steps>>8 == 255)
+        if(dataCount==3)
         {
-            UCA0TXBUF = 0;
-            escVar +=8;
-        }
-        else
-            UCA0TXBUF = steps>>8;
 
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-        if((steps<<8)>>8 == 255)
-          {
-              UCA0TXBUF = 0;
-              escVar +=4;
-          }
-        else
-            UCA0TXBUF = steps;
+            escVar =0;
+            //Send Data
+            while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+                    UCA0TXBUF = 255;
+            while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+                    UCA0TXBUF = bufferLength;
 
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-        if(positionCurrent>>8 == 255)
-        {
-            UCA0TXBUF = 0;
-            escVar +=2;
-        }
-        else
-            UCA0TXBUF =positionCurrent>>8;
+            while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+            if(steps>>8 == 255)
+            {
+                UCA0TXBUF = 0;
+                escVar +=8;
+            }
+            else
+                UCA0TXBUF = steps>>8;
 
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-        if((positionCurrent<<8)>>8 == 255)
-          {
-              UCA0TXBUF = 0;
-              escVar +=1;
-          }
-        else
-                UCA0TXBUF =positionCurrent;
-        while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
-                UCA0TXBUF = escVar;
+            while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+            if((steps<<8)>>8 == 255)
+              {
+                  UCA0TXBUF = 0;
+                  escVar +=4;
+              }
+            else
+                UCA0TXBUF = steps;
+
+            while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+            if(positionCurrent>>8 == 255)
+            {
+                UCA0TXBUF = 0;
+                escVar +=2;
+            }
+            else
+                UCA0TXBUF =positionCurrent>>8;
+
+            while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+            if((positionCurrent<<8)>>8 == 255)
+              {
+                  UCA0TXBUF = 0;
+                  escVar +=1;
+              }
+            else
+                    UCA0TXBUF =positionCurrent;
+            while ((UCA0IFG & UCTXIFG)==0); //Check if no transmission is taking place ie. if transmit flag is clear
+                    UCA0TXBUF = escVar;
+    }
+    dataCount+=1;
+    if(dataCount>=4)
+        dataCount=0;
 
     }
     return 0;
